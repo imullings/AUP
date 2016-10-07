@@ -2,7 +2,7 @@
 ' Please see https://github.com/imullings/AUP
 
 nSeconds = "300"							'Number of Seconds added to the minutes before user is logged off if they dont agree to the AUP
-nrandomlogons = "2"							'Random number of times AUP pops up at logon.
+nrandomlogons = "20"							'Random number of times AUP pops up at logon.
 nPathToAUPFile = "aup.html" 						' The path to the HTML file with your AUP. Leave blank for a file called aup.html in the same folder as this script
 nPathToAcceptFile = ""	 					' The path to the HTML file that shows the AUP has been Accepted. If left blank it will go to a hidden file called accept.htm 
 nBackgroundColour = "lightblue"				' Background colour of window
