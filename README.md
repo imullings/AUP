@@ -1,2 +1,0 @@
-# AUP
-AUP for Windows
