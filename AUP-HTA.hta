@@ -1,0 +1,299 @@
+<!--
+AUP by Ian Mullings
+Please see https://github.com/imullings/AUP
+-->
+<HTA:Application   contextMenu=no border=thin minimizebutton=no maximizebutton=no sysmenu=no SHOWINTASKBAR=no windowstate=maximize >
+<head>
+<title>AUP</title> 
+</head>
+<SCRIPT language="VBScript"> 
+ On Error resume next    
+    Dim pbTimerID ,pbHTML,pbWaitTime,pbHeight,pbWidth,pbBorder,pbUnloadedColor,pbLoadedColor,pbStartTime 
+	Dim nText1,nText2,nAcceptText,LogoffText,nPathToAcceptFile
+	
+	
+
+ 
+    Sub Window_OnLoad 
+	'	Read settings from AUP-settings.inf in same folder
+	
+Set ws = CreateObject("wscript.Shell")
+strHomeshare=ws.ExpandEnvironmentStrings("%HOMESHARE%")
+	
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set f = fso.OpenTextFile("AUP-settings.inf")
+Do Until f.AtEndOfStream
+	MyLine = f.ReadLine
+ 
+
+ 	'#######Read number of nSeconds
+	if InStr(MyLine, "nSeconds") <> 0 and nSecondsFound <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nSeconds = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nSecondsFound = 1
+
+	end if 
+	'########
+ 	'#######Read number of nBackgroundColour
+	if InStr(MyLine, "nBackgroundColour") <> 0 and nBackgroundColourFound <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nBackgroundColour = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nBackgroundColourFound = 1
+
+	end if 
+	'########	
+ 	'#######Read number of nText1
+	if InStr(MyLine, "nText1") <> 0 and nText1Found <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nText1 = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nText1Found = 1
+	
+	end if 
+	'########	 
+ 	'#######Read number of nText2
+	if InStr(MyLine, "nText2") <> 0 and nText2Found <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nText2 = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nText2Found = 1
+
+	end if 
+	'########
+ 	'#######Read nAcceptText
+	if InStr(MyLine, "nAcceptText") <> 0 and nAcceptTextFound <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nAcceptText = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nAcceptTextFound = 1
+	end if 
+	'########
+ 	'#######Read nLogoffText
+	if InStr(MyLine, "nLogoffText") <> 0 and nLogoffTextFound <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nLogoffText = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nLogoffTextFound = 1
+
+	end if 
+	'########	
+ 	'#######Read path nPathToAcceptFile
+	if InStr(MyLine, "nPathToAcceptFile") <> 0 and nPathToAcceptFileFound <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nPathToAcceptFile = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nPathToAcceptFileFound = 1
+   
+	
+	end if 
+	'########	
+	 	'#######Read nAUPTextVersion
+	if InStr(MyLine, "nAUPTextVersion") <> 0 and nAUPTextVersionFound <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nAUPTextVersion = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nAUPTextVersionFound = 1
+   
+	
+	end if 
+	'########
+		 	'#######Read nPathToAUPFile
+	if InStr(MyLine, "nPathToAUPFile") <> 0 and nPathToAUPFileFound <> 1 then
+    SettingsFind1 = InStr(MyLine, """")  
+    SettingsFind2 = Mid(MyLine,SettingsFind1 + 1)
+    SettingsFind3 = InStr(SettingsFind2, """")
+	
+    nPathToAUPFileVersion = Mid(MyLine,SettingsFind1 + 1,SettingsFind3 - 1)
+    nPathToAUPFileFound = 1
+   
+	
+	end if 
+	'########
+Loop
+f.Close
+
+	'########### Set defaults if not found in AUP-Settings.inf
+
+	
+	If nSeconds = "" then
+	nSeconds = "20"
+	end if		
+   
+	If nBackgroundColour = "" then
+	nBackgroundColour = "LightBlue"
+	end if		
+   
+	If nText1 = "" then
+	nText1 = "You have "
+	end if	
+   
+	If nText2 = "" then
+	nText2 = " minutes to agree to the AUP."
+	end if		
+  
+	If nAcceptText = "" then
+	nAcceptText = "Accept"
+	end if	
+   
+	If nLogoffText = "" then
+	nLogoffText = "Log Off"
+	end if	
+
+	If nAUPTextVersion = "" then
+	nAUPTextVersion = "1"
+	end if
+	
+	If nPathToAcceptFile = "" then
+	nPathToAcceptFile = strHomeshare & "\accept" & nAUPTextVersion & ".htm"
+	else
+	nPathToAcceptFile = nPathToAcceptFile & "\accept" & nAUPTextVersion & ".htm"
+	end if
+	
+	If nPathToAUPFile = "" then
+	nPathToAUPFile = "aup.html"
+	end if	
+
+	'############################### load AUP.html
+	  set oFSO=CreateObject("Scripting.FileSystemObject")
+      set oFile=oFSO.OpenTextFile(nPathToAUPFile,1)
+      text=oFile.ReadAll
+      oFile.Close
+	  
+	  
+	  
+ 
+ Set mySpan = document.getelementbyid("aup") 
+ mySpan.InnerHtml = mySpan.InnerHtml & text 
+        
+        ' Progress Bar Settings 
+        pbWaitTime = nSeconds         ' How many seconds the progress bar lasts 
+        pbHeight = 10        ' Progress bar height 
+        pbWidth= 380         ' Progress bar width 
+        pbUnloadedColor="white"        ' Color of unloaded area 
+        pbLoadedColor="black"        ' Color of loaded area 
+        pbBorder="grey"        ' Color of Progress bar border 
+        if nText1="" then
+		nText1="You have "
+		End If
+		if nText2="" then
+		nText2=" minutes to agree to the AUP."	
+		End If		
+	
+		
+        ' Don't edit these things 
+        pbStartTime = Now 
+        rProgressbar 
+        pbTimerID = window.setInterval("rProgressbar", 200) 
+		
+		'#################################Add Buttons to HTML
+		Buttons = "<div style='position:  relative;  bottom:  0;'><input class='button' type='button' id='btn2' value=' " & nAcceptText & " ' onclick='Accept'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input class='button1' type='button' id='btn1' value=' " & nLogoffText & " ' onclick='LogOff'></br>&nbsp;</br>&nbsp;</div> "
+		
+			 Set mySpan1 = document.getelementbyid("ButtonsHTML") 
+				mySpan1.InnerHtml = mySpan1.InnerHtml & (Buttons  & "  " )
+				
+		'################################### change colour of page
+		document.body.bgColor=nBackgroundColour		
+
+         
+    End Sub 
+ 
+ 
+    Sub rProgressbar 
+	
+        pbHTML = "" 
+        pbSecsPassed = DateDiff("s",pbStartTime,Now) 
+        pbMinsToGo =  Int((pbWaitTime - pbSecsPassed) / 60) 
+        pbSecsToGo = Int((pbWaitTime - pbSecsPassed) - (pbMinsToGo * 60)) 
+        if pbSecsToGo < 10 then 
+            pbSecsToGo = "0" & pbSecsToGo  
+        end if 
+        pbLoadedWidth = (pbSecsPassed / pbWaittime) * pbWidth 
+        pbUnloadedWidth = pbWidth - pbLoadedWidth 
+        pbHTML = pbHTML & "<table border=0 cellpadding=0 cellspacing=0 >" 
+        pbHTML = pbHTML & "<td class=AUPHeadding>" & nText1 & pbMinsToGo & ":" & pbSecsToGo & nText2 & "</td>" 
+        pbHTML = pbHTML & "</tr></table>" 		
+        pbHTML = pbHTML & "<table border=1 bordercolor=" & pbBorder & " cellpadding=0 cellspacing=0 width=" & pbWidth & "><tr>" 
+        pbHTML = pbHTML & "<th width=" & pbLoadedWidth & " height=" & pbHeight & "align=left bgcolor="  & pbLoadedColor & "></th>" 
+        pbHTML = pbHTML & "<th width=" & pbUnloadedWidth & " height=" & pbHeight & "align=left bgcolor="  & pbUnLoadedColor & "></th>" 
+        pbHTML = pbHTML & "</tr></table></b></font>" 
+        progressbar.InnerHTML = pbHTML 
+        if DateDiff("s",pbStartTime,Now) >= pbWaitTime then 
+            StopTimer 
+            DoAction 
+        end if 
+
+		
+    End Sub 
+     
+    Sub StopTimer 
+        window.clearInterval(PBTimerID) 
+    End Sub 
+	  
+    Sub DoAction 
+        Set WshShell = CreateObject("WScript.Shell") 
+        Return = WshShell.Run("Shutdown.exe -l -f ",1,True)     
+        Self.close 
+    End Sub 
+	    Sub LogOff 
+       Set WshShell = CreateObject("WScript.Shell") 
+        Return = WshShell.Run("Shutdown.exe -l -f ",1,True)     
+        Self.close
+    End Sub 
+     
+    Sub Accept 
+   '##############################create file in homeshare and add date
+ Set objFSO = CreateObject("Scripting.FileSystemObject")
+ Set objNet = CreateObject("WScript.Network")
+strCompName = objNet.ComputerName
+
+ If objFSO.FileExists(nPathToAcceptFile) Then
+ Else
+  On Error resume next 
+     objFSO.CreateTextFile(nPathToAcceptFile)
+ End If
+
+ Set objFile = objFSO.OpenTextFile(nPathToAcceptFile, 8)
+ 
+ objFile.WriteLine Date() & " , " & Time() & " , " & strCompName & " </br>"
+ objFile.Close
+ Set fs = CreateObject("Scripting.FileSystemObject") 
+Set objFile1 = fs.GetFile(nPathToAcceptFile) 
+ objFile1.attributes = 2
+	
+        Self.Close 
+    End Sub 
+
+
+</SCRIPT> 
+
+ 
+
+
+<body  scroll=no style=';font:normal 20vh Arial;border-Style:inset;border-Width:3px'>
+<style>.button { background-color: #4CAF50; border: none; color: white; padding: 5px 22px; text-align: center;text-decoration: none;display:inline-block; font-size: 30px; margin: 4px 2px; cursor: pointer};</style>
+<style>.button1 { background-color: #f44336; border: none; color: white; padding: 5px 22px; text-align: center;text-decoration: none;display:inline-block; font-size: 30px; margin: 4px 2px; cursor: pointer};</style>
+<style>.AUPHeadding { font-weight: bold; font-size: 2.5em; color: red; align=center; };</style>						
+<center><span id = "progressbar"></span><br></center>
+<div style='background= white; overflow-y:scroll; height:75%; border: 2px solid; padding: 5px 5px 5px 5px; ' id="aup">&nbsp;</div><br>			
+<center><div id='ButtonsHTML'></div> 
+</center>
+</body>
